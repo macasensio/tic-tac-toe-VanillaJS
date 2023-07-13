@@ -8,6 +8,13 @@ const startCells = [
 let go = 'circle'
 infoDisplay.textContent = 'Circle goes first'
 
+let turns = 0
+
+const resetBtn = document.querySelector('#resetBtn')
+resetBtn.addEventListener('click', () => location.reload())
+
+
+//functions
 function createBoard() {
     startCells.forEach((_cell, index) => {
         const cellElement = document.createElement('div')
@@ -27,17 +34,23 @@ function addGo(e) {
     infoDisplay.textContent = `It is now ${go}'s go`
     e.target.removeEventListener('click', addGo)
     
+    turns++
     checkScore()
+
+    if(turns === 9 && checkScore() === false){
+        infoDisplay.textContent = `No one wins! Try again`
+    }
 }
 
-function checkScore() {
+const checkScore = () => {
     const allSquares = document.querySelectorAll('.square')
-    console.log(allSquares)
     const winningCombos = [
         [0,1,2], [3,4,5], [6,7,8],
         [0,3,6], [1,4,7], [2,5,8],
         [0,4,8], [2,4,6]
     ]
+
+    let isWinner = false
 
     winningCombos.forEach(array => {
         const circleWins = array.every(cell => 
@@ -47,7 +60,8 @@ function checkScore() {
         if(circleWins) {
             infoDisplay.textContent = 'Circle Wins!'
             allSquares.forEach(square => square.replaceWith(square.cloneNode(true)))
-            return
+            isWinner = true
+            return isWinner
         }
     })
 
@@ -59,7 +73,10 @@ function checkScore() {
         if(crossWins) {
             infoDisplay.textContent = 'Cross Wins!'
             allSquares.forEach(square => square.replaceWith(square.cloneNode(true)))
-            return
+            isWinner = true
+            return isWinner
         }
     })
+
+    return isWinner
 }
